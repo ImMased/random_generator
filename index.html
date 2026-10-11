@@ -62,20 +62,23 @@
   .brand-logo{width:36px;height:36px;flex-shrink:0;filter:drop-shadow(0 2px 6px rgba(0,0,0,.4));}
   .brand-name{font-family:'Fredoka','Poppins',sans-serif;font-weight:600;font-size:clamp(15px,2.6vw,21px);
     white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 2px 10px rgba(0,0,0,.35);}
-  .header-actions{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+  .header-actions{position:relative;flex-shrink:0;}
   .hbtn{position:relative;background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.24);
-    padding:8px 13px;border-radius:11px;font-size:13.5px;}
+    width:42px;height:42px;padding:0;justify-content:center;border-radius:12px;}
   .hbtn:hover{background:rgba(255,255,255,.24);}
-  .hbtn.hbtn-main{background:linear-gradient(135deg,var(--accent),var(--accent2));border-color:transparent;box-shadow:0 4px 14px rgba(124,58,237,.45);}
-  .hbtn.logged{background:rgba(34,197,94,.22);border-color:rgba(74,222,128,.55);}
-  .hbtn .lbl{max-width:110px;overflow:hidden;text-overflow:ellipsis;}
   .dirty-dot{position:absolute;top:-4px;right:-4px;width:11px;height:11px;border-radius:50%;background:#facc15;border:2px solid #241a35;}
-  @media (max-width:560px){
-    .hbtn{padding:8px 10px;}
-    .hbtn .lbl{display:none;}
-    .brand-logo{width:30px;height:30px;}
-  }
-  @media (max-width:380px){ .brand-name{display:none;} }
+  .menu-panel{position:absolute;right:0;top:calc(100% + 10px);min-width:220px;max-width:calc(100vw - 20px);
+    background:var(--card);color:var(--text);border:1px solid var(--card-border);border-radius:16px;
+    box-shadow:0 14px 40px rgba(0,0,0,.35);padding:6px;display:flex;flex-direction:column;gap:2px;z-index:120;}
+  .menu-item{background:transparent;color:var(--text);width:100%;justify-content:flex-start;padding:12px 14px;
+    border-radius:11px;font-size:14.5px;gap:12px;}
+  .menu-item:hover{background:var(--pill-bg);}
+  .menu-item .ico{display:inline-flex;width:22px;justify-content:center;flex-shrink:0;}
+  .menu-item .mlbl{flex:1;text-align:left;overflow:hidden;text-overflow:ellipsis;}
+  .menu-item.logged{color:#16a34a;}
+  .menu-note{font-size:11px;font-weight:700;color:#a16207;background:#fef3c7;border-radius:999px;padding:2px 8px;}
+  @media (max-width:560px){ .brand-logo{width:30px;height:30px;} }
+  @media (max-width:340px){ .brand-name{display:none;} }
 
   /* ---- Auth modal ---- */
   .auth-modal{text-align:left;max-width:400px;padding:26px 24px;}
@@ -127,6 +130,7 @@
     font-weight:600;font-size:14px;padding:10px 16px;transition:transform .12s ease, box-shadow .12s ease, opacity .12s ease;
     display:inline-flex;align-items:center;gap:7px;white-space:nowrap;
   }
+  button{touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
   button:active{transform:scale(.96);}
   button:disabled{opacity:.45;cursor:not-allowed;transform:none;}
   .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 6px 16px rgba(124,58,237,.4);}
@@ -136,12 +140,16 @@
   .btn-lg{padding:14px 26px;font-size:16px;border-radius:16px;}
   .btn-danger{background:#fde3e9;color:var(--danger);}
 
-  .mode-switch{display:flex;gap:12px;margin-top:16px;flex-wrap:wrap;}
+  .autofill-row{display:flex;align-items:center;gap:8px;flex-wrap:nowrap;margin-top:12px;}
+  .autofill-label{flex:1 1 auto;min-width:0;font-size:13px;color:var(--text-soft);font-weight:600;line-height:1.3;}
+  .autofill-row .num-input{width:68px;flex:0 0 68px;text-align:center;}
+  .autofill-row button{flex:0 0 auto;}
+  .mode-switch{display:flex;gap:10px;margin-top:16px;flex-wrap:nowrap;}
   .mode-btn{
-    flex:1;min-width:200px;background:var(--input-bg);border:2px solid var(--input-border);
-    border-radius:16px;padding:16px;text-align:left;color:var(--text);
+    flex:1 1 0;min-width:0;background:var(--input-bg);border:2px solid var(--input-border);
+    border-radius:16px;padding:14px 10px;text-align:center;color:var(--text);justify-content:center;white-space:normal;
   }
-  .mode-btn b{display:block;font-size:16px;font-family:'Fredoka',sans-serif;}
+  .mode-btn b{display:block;font-size:clamp(13px,3.6vw,16px);font-family:'Fredoka',sans-serif;line-height:1.25;}
   .mode-btn span{font-size:12.5px;color:var(--text-soft);}
   .mode-btn.active{border-color:var(--accent);background:linear-gradient(135deg,rgba(124,58,237,.15),rgba(236,72,153,.12));}
 
@@ -252,21 +260,27 @@
       <span class="brand-name">Name Picker &amp; Team Generator</span>
     </div>
     <div class="header-actions">
-      <button class="hbtn hbtn-main" id="saveBtn" type="button" title="Save (Ctrl+S)">
-        <span class="ico">💾</span><span class="lbl">Save</span><span class="dirty-dot hidden" id="dirtyDot" title="Ada perubahan yang belum disimpan"></span>
+      <button class="hbtn" id="menuBtn" type="button" title="Menu" aria-label="Menu" aria-haspopup="true" aria-expanded="false">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <span class="dirty-dot hidden" id="dirtyDot" title="Ada perubahan yang belum disimpan"></span>
       </button>
-      <button class="hbtn" id="openBtn" type="button" title="Open pengaturan tersimpan">
-        <span class="ico">📂</span><span class="lbl">Open</span>
-      </button>
-      <button class="hbtn" id="shareBtn" type="button" title="Salin link Share">
-        <span class="ico">🔗</span><span class="lbl">Share</span>
-      </button>
-      <button class="hbtn" id="fsBtn" type="button" title="Fullscreen" aria-label="Fullscreen">
-        <span class="ico" id="fsIcon"></span>
-      </button>
-      <button class="hbtn" id="authBtn" type="button" title="Login">
-        <span class="ico">👤</span><span class="lbl" id="authLbl">Login</span>
-      </button>
+      <div class="menu-panel hidden" id="menuPanel" role="menu">
+        <button class="menu-item" id="saveBtn" type="button" role="menuitem" title="Save (Ctrl+S)">
+          <span class="ico">💾</span><span class="mlbl">Save</span><span class="menu-note hidden" id="dirtyNote">belum disimpan</span>
+        </button>
+        <button class="menu-item" id="openBtn" type="button" role="menuitem">
+          <span class="ico">📂</span><span class="mlbl">Open</span>
+        </button>
+        <button class="menu-item" id="shareBtn" type="button" role="menuitem" title="Salin link Share">
+          <span class="ico">🔗</span><span class="mlbl">Share</span>
+        </button>
+        <button class="menu-item" id="fsBtn" type="button" role="menuitem" aria-label="Fullscreen">
+          <span class="ico" id="fsIcon"></span><span class="mlbl" id="fsLbl">Fullscreen</span>
+        </button>
+        <button class="menu-item" id="authBtn" type="button" role="menuitem" title="Login">
+          <span class="ico">👤</span><span class="mlbl" id="authLbl">Login</span>
+        </button>
+      </div>
     </div>
   </div>
 </header>
@@ -289,9 +303,9 @@
       <small class="hint" id="fileHint"></small>
     </div>
 
-    <div class="row" style="margin-top:12px;">
-      <span style="font-size:13px;color:var(--text-soft);font-weight:600;">🔢 Isi otomatis angka 1 sampai</span>
-      <input type="number" id="autoFillX" min="1" max="100" value="10" class="num-input" style="width:72px;">
+    <div class="autofill-row">
+      <span class="autofill-label">🔢 Isi otomatis angka 1 sampai</span>
+      <input type="number" id="autoFillX" min="1" max="100" value="10" class="num-input" inputmode="numeric" pattern="[0-9]*">
       <button class="btn-secondary" id="autoFillBtn" type="button">Isi Daftar</button>
     </div>
 
@@ -375,11 +389,11 @@
           <div class="team-grid-inputs">
             <div>
               <label>Jumlah Grup</label>
-              <input type="number" class="num-input" id="teamGroupCount" min="1" value="2">
+              <input type="number" class="num-input" id="teamGroupCount" min="1" value="2" inputmode="numeric" pattern="[0-9]*">
             </div>
             <div>
               <label>Maks Orang</label>
-              <input type="number" class="num-input" id="teamMaxPerGroup" min="1" value="1">
+              <input type="number" class="num-input" id="teamMaxPerGroup" min="1" value="1" inputmode="numeric" pattern="[0-9]*">
             </div>
           </div>
 
@@ -934,6 +948,7 @@
   function updateFsButton(){
     $("fsIcon").innerHTML = fsActiveMode ? iconCrossroads(18) : ICON_ENTER_FS;
     const t = fsActiveMode ? "Keluar Fullscreen" : "Fullscreen";
+    $("fsLbl").textContent = t;
     $("fsBtn").title = t;
     $("fsBtn").setAttribute("aria-label", t);
   }
@@ -970,30 +985,49 @@
   }
 
   /* ---------------- Team generator: linked group/max inputs ---------------- */
-  function recomputeFromGroupCount(){
+  /* commit=false  → dipanggil saat mengetik: kolom yang sedang diedit TIDAK ditulis ulang
+                       (supaya angka bisa dihapus & diketik bebas, termasuk di keyboard Android);
+                       kolom lawannya dihitung dari angka yang valid.
+     commit=true   → dipanggil saat selesai mengetik (blur/Enter) atau dari kode lain:
+                       nilai dirapikan (kosong → 1, dibatasi 1..jumlah nama). */
+  function recomputeFromGroupCount(commit = true){
     if(updatingTeamInputs) return;
-    updatingTeamInputs = true;
     const total = Math.max(names.length, 1);
-    let g = clamp(parseInt($("teamGroupCount").value)||1, 1, total);
-    $("teamGroupCount").value = g;
+    const el = $("teamGroupCount");
+    const raw = parseInt(el.value);
+    if(isNaN(raw) && !commit) return;               // sedang dikosongkan: biarkan
+    updatingTeamInputs = true;
+    const g = clamp(isNaN(raw) ? 1 : raw, 1, total);
+    if(commit) el.value = g;
     $("teamMaxPerGroup").value = Math.ceil(total/g);
     updatingTeamInputs = false;
     teams = [];
     renderTeamPlaceholders();
   }
-  function recomputeFromMaxPerGroup(){
+  function recomputeFromMaxPerGroup(commit = true){
     if(updatingTeamInputs) return;
-    updatingTeamInputs = true;
     const total = Math.max(names.length, 1);
-    let m = clamp(parseInt($("teamMaxPerGroup").value)||1, 1, total);
-    $("teamMaxPerGroup").value = m;
+    const el = $("teamMaxPerGroup");
+    const raw = parseInt(el.value);
+    if(isNaN(raw) && !commit) return;
+    updatingTeamInputs = true;
+    const m = clamp(isNaN(raw) ? 1 : raw, 1, total);
+    if(commit) el.value = m;
     $("teamGroupCount").value = Math.ceil(total/m);
     updatingTeamInputs = false;
     teams = [];
     renderTeamPlaceholders();
   }
-  $("teamGroupCount").addEventListener("input", recomputeFromGroupCount);
-  $("teamMaxPerGroup").addEventListener("input", recomputeFromMaxPerGroup);
+  $("teamGroupCount").addEventListener("input", ()=> recomputeFromGroupCount(false));
+  $("teamMaxPerGroup").addEventListener("input", ()=> recomputeFromMaxPerGroup(false));
+  $("teamGroupCount").addEventListener("change", ()=> recomputeFromGroupCount(true));
+  $("teamMaxPerGroup").addEventListener("change", ()=> recomputeFromMaxPerGroup(true));
+  $("teamGroupCount").addEventListener("blur", ()=> recomputeFromGroupCount(true));
+  $("teamMaxPerGroup").addEventListener("blur", ()=> recomputeFromMaxPerGroup(true));
+  // Ketuk kolom → seluruh angka terpilih, sehingga langsung bisa diganti tanpa menghapus manual
+  ["teamGroupCount","teamMaxPerGroup","autoFillX"].forEach(id=>{
+    $(id).addEventListener("focus", (e)=> setTimeout(()=>{ try{ e.target.select(); }catch(_){} }, 0));
+  });
 
   /* Tampilkan kotak grup kosong sesuai "Jumlah Grup" sebelum tombol
      "Buat Kelompok" ditekan, dan saat mode fullscreen. */
@@ -1221,7 +1255,24 @@
 
   function stateSig(){ return JSON.stringify(getState(true)); }
   function isDirty(){ return stateSig() !== lastSavedSig; }
-  function updateDirty(){ $("dirtyDot").classList.toggle("hidden", !isDirty()); }
+  function updateDirty(){
+    const d = isDirty();
+    $("dirtyDot").classList.toggle("hidden", !d);
+    $("dirtyNote").classList.toggle("hidden", !d);
+  }
+
+  /* ---- Menu hamburger (sticky header) ---- */
+  (function(){
+    const btn = $("menuBtn"), panel = $("menuPanel");
+    function setOpen(open){
+      panel.classList.toggle("hidden", !open);
+      btn.setAttribute("aria-expanded", open ? "true" : "false");
+    }
+    btn.addEventListener("click", (e)=>{ e.stopPropagation(); setOpen(panel.classList.contains("hidden")); });
+    panel.addEventListener("click", (e)=>{ if(e.target.closest(".menu-item")) setOpen(false); });
+    document.addEventListener("click", (e)=>{ if(!panel.contains(e.target) && e.target !== btn) setOpen(false); });
+    document.addEventListener("keydown", (e)=>{ if(e.key === "Escape") setOpen(false); });
+  })();
   function markSaved(sig, name){
     lastSavedSig = sig;
     if(typeof name === "string") currentSettingName = name;
